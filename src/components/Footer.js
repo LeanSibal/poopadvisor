@@ -9,6 +9,7 @@ import {
 import {
     Font
 } from 'expo';
+import { Actions } from 'react-native-router-flux';
 
 class Footer extends Component {
     state = {
@@ -24,6 +25,7 @@ class Footer extends Component {
         return (
             <View style={styles.footer}>
                 <TouchableOpacity
+                    onPress={ () => Actions.menu() }
                 >
                     <Image
                         source={ require('../assets/images/left-button.png') }
