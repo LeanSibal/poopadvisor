@@ -4,7 +4,7 @@ import {
     Text,
 } from 'react-native';
 
-class MainMenu extends Component {
+class Menu extends Component {
     render(){
         return(
             <View>
@@ -14,4 +14,4 @@ class MainMenu extends Component {
     }
 }
 
-export default MainMenu;
+export default Menu;
