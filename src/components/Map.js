@@ -9,6 +9,7 @@ import {
     Location,
     Permissions
 } from 'expo';
+import { onMapRegionChange } from '../actions';
 import { connect } from 'react-redux';
 
 class Map extends Component {
@@ -20,12 +21,13 @@ class Map extends Component {
     };
 
     render(){
+        const { mapRegion, onMapRegionChange } = this.props;
         return(
             <View style={ styles.container }>
                 <MapView 
-                    mapRegion={ this.state.mapRegion }
+                    mapRegion={ mapRegion }
                     style={ styles.map } 
-                    onRegionChange={this._handleMapRegionChange}
+                    onRegionChange={ onMapRegionChange }
                 />
             </View>
         );
@@ -45,4 +47,10 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(null)(Map);
+export default connect(state => {
+    return {
+        mapRegion: state.map.mapRegion
+    }
+},{
+    onMapRegionChange
+})(Map);
