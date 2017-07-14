@@ -5,25 +5,28 @@ import {
 } from 'react-native';
 import MenuList from '../components/MenuList';
 
-class Menu extends Component {
+class Filters extends Component {
     render(){
         return(
             <MenuList listItems={[{
-                name: 'Filters',
+                name: 'Gender',
                 image: require('../assets/images/icon-filters.png'),
-                action: 'filters',
+                action: 'filter_gender',
             }, {
-                name: 'Favorites',
+                name: 'Time',
                 image: require( '../assets/images/icon-favorites.png' ),
+                action: 'filter_time',
             }, {
-                name: 'Most Shittable',
+                name: 'Location',
                 image: require( '../assets/images/icon-medal.png' ),
+                action: 'filter_location',
             }, {
-                name: 'About',
+                name: 'Rating',
                 image: require( '../assets/images/icon-about.png' ),
+                action: 'filter_rating',
             }]}/>
         );
     }
 }
 
-export default Menu;
+export default Filters;

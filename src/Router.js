@@ -4,6 +4,11 @@ import { Constants } from 'expo';
 import { Scene, Router } from 'react-native-router-flux';
 import Home from './screens/Home';
 import Menu from './screens/Menu';
+import Filters from './screens/Filters';
+import FilterGender from './screens/FilterGender';
+import FilterLocation from './screens/FilterLocation';
+import FilterTime from './screens/FilterTime';
+import FilterRating from './screens/FilterRating';
 
 const RouterComponent = () => {
     return (
@@ -12,6 +17,11 @@ const RouterComponent = () => {
                 <Scene key="root">
                     <Scene key="home" component={Home} hideNavBar={true}/>
                     <Scene key="menu" component={Menu} title="Menu" />
+                    <Scene key="filters" component={Filters} title="Filters" />
+                    <Scene key="filter_gender" component={FilterGender} title="Gender" />
+                    <Scene key="filter_location" component={FilterLocation} title="Location" />
+                    <Scene key="filter_time" component={FilterTime} title="Time" />
+                    <Scene key="filter_rating" component={FilterRating} title="Rating" />
                 </Scene>
             </Router>
         </View>

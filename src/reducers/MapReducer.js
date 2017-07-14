@@ -1,11 +1,12 @@
 import { MAP_REGION_CHANGE } from '../actions/types';
 const INITIAL_STATE = {
     mapRegion: {
-        latitude: 37.78825,
-        longitude: -122.4324,
+        latitude: 14.56091178,
+        longitude: 121.02452788,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421
-    }
+    },
+    locations: []
 };
 
 export default ( state = INITIAL_STATE, action ) => {

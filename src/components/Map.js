@@ -25,9 +25,10 @@ class Map extends Component {
         return(
             <View style={ styles.container }>
                 <MapView 
-                    mapRegion={ mapRegion }
+                    region={ mapRegion }
                     style={ styles.map } 
                     onRegionChange={ onMapRegionChange }
+                    showUserLocation={ true }
                 />
             </View>
         );
@@ -49,6 +50,7 @@ const styles = StyleSheet.create({
 
 export default connect(state => {
     return {
+        locations: state.map.locations,
         mapRegion: state.map.mapRegion
     }
 },{
