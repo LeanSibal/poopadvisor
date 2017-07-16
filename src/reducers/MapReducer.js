@@ -1,9 +1,11 @@
 import { 
     MAP_REGION_CHANGE,
+    SET_LOCATION_ID,
     PUSH_LOCATIONS,
     PUSH_LARGER_BOUNDS,
 } from '../actions/types';
 const INITIAL_STATE = {
+    location_id: null,
     mapRegion: {
         latitude: 14.56091178,
         longitude: 121.02452788,
@@ -18,6 +20,9 @@ export default ( state = INITIAL_STATE, action ) => {
     switch( action.type ) {
         case MAP_REGION_CHANGE:
             return { ...state, mapRegion: action.payload };
+
+        case SET_LOCATION_ID:
+            return { ...state, location_id: action.payload };
 
         case PUSH_LOCATIONS:
             let ids = state.locations.map( ( location, i ) => {

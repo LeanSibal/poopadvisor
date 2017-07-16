@@ -13,8 +13,10 @@ import {
     onMapRegionChange,
     pushLocations,
     pushLargerBounds,
+    setLocation,
 } from '../actions';
 import { connect } from 'react-redux';
+import { Actions } from 'react-native-router-flux';
 
 import API from '../utils/api';
 
@@ -87,7 +89,7 @@ class Map extends Component {
     }
 
     render(){
-        const { mapRegion, locations } = this.props;
+        const { mapRegion, locations, setLocation } = this.props;
         return(
             <View style={ styles.container }>
                 <MapView 
@@ -105,6 +107,10 @@ class Map extends Component {
                             latitude: location.lat,
                             longitude: location.lng,
                         }}
+                        onPress={ () => {
+                            setLocation( location.id );
+                            Actions.location_view();
+                        } }
                     />
                 ) ) }
                 </MapView>
@@ -126,7 +132,7 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(state => {
+export default connect( state => {
     return {
         locations: state.map.locations,
         mapRegion: state.map.mapRegion,
@@ -136,5 +142,6 @@ export default connect(state => {
 },{
     onMapRegionChange,
     pushLocations,
-    pushLargerBounds
+    pushLargerBounds,
+    setLocation,
 })(Map);

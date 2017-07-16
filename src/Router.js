@@ -9,6 +9,7 @@ import FilterGender from './screens/FilterGender';
 import FilterLocation from './screens/FilterLocation';
 import FilterTime from './screens/FilterTime';
 import FilterRating from './screens/FilterRating';
+import LocationView from './screens/LocationView';
 
 const RouterComponent = () => {
     return (
@@ -22,6 +23,7 @@ const RouterComponent = () => {
                     <Scene key="filter_location" component={FilterLocation} title="Location" />
                     <Scene key="filter_time" component={FilterTime} title="Time" />
                     <Scene key="filter_rating" component={FilterRating} title="Rating" />
+                    <Scene key="location_view" component={LocationView} title="" />
                 </Scene>
             </Router>
         </View>
