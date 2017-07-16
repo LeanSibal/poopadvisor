@@ -89,7 +89,7 @@ class Map extends Component {
     }
 
     render(){
-        const { mapRegion, locations, setLocation } = this.props;
+        const { filter, mapRegion, locations, setLocation } = this.props;
         return(
             <View style={ styles.container }>
                 <MapView 
@@ -98,7 +98,13 @@ class Map extends Component {
                     onRegionChange={ this._onRegionChange.bind(this) }
                     showsUserLocation={ true }
                 >
-                { locations.map( ( location, i ) => (
+                { locations.filter( location => {
+                    return (
+                        ( filter.gender == '' || location.gender == filter.gender ) &&
+                        ( filter.type == '' || location.type == filter.type ) &&
+                        ( filter.rating == '0' || parseFloat( location.rating ) >= parseFloat( filter.rating ) )
+                    );
+                }).map( ( location, i ) => (
                     <MapView.Marker
                         key={ i }
                         image={ require('../assets/images/pin.png') }
