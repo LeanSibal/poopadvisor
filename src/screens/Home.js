@@ -5,8 +5,12 @@ import {
 } from 'react-native';
 import Map from '../components/Map';
 import Footer from '../components/Footer';
+import { Actions } from 'react-native-router-flux';
 
 class Home extends Component {
+    componentDidMount(){
+        Actions.location_form();
+    }
     render(){
         return(
             <View style={ styles.container }>

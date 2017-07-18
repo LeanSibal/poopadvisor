@@ -36,7 +36,9 @@ class Footer extends Component {
                         <Text style={styles.branding}>Shittable ba?</Text>
                     ) : null
                 }
-                <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={ () => Actions.location_add() }
+                >
                     <Image
                         source={ require('../assets/images/right-button.png') }
                     />

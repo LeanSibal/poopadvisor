@@ -10,6 +10,8 @@ import FilterLocation from './screens/FilterLocation';
 import FilterTime from './screens/FilterTime';
 import FilterRating from './screens/FilterRating';
 import LocationView from './screens/LocationView';
+import LocationAdd from './screens/LocationAdd';
+import LocationForm from './screens/LocationForm';
 
 const RouterComponent = () => {
     return (
@@ -24,6 +26,8 @@ const RouterComponent = () => {
                     <Scene key="filter_time" component={FilterTime} title="Time" />
                     <Scene key="filter_rating" component={FilterRating} title="Rating" />
                     <Scene key="location_view" component={LocationView} title="" />
+                    <Scene key="location_add" component={LocationAdd} title="Add" />
+                    <Scene key="location_form" component={LocationForm} title="Add" />
                 </Scene>
             </Router>
         </View>
@@ -34,7 +38,7 @@ const styles = StyleSheet.create({
     container: {
         flex:1,
         paddingTop: Platform.OS === 'android' ? Constants.statusBarHeight : 0,
-        justifyContent: 'center',
+        flexDirection: 'column',
         backgroundColor: '#A4842F'
     }
 });
