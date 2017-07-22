@@ -7,9 +7,7 @@ import LocationCreate from '../components/LocationCreate';
 class LocationForm extends Component {
     render() {
         return (
-            <View>
-                <LocationCreate/>
-            </View>
+            <LocationCreate/>
         );
     }
 }

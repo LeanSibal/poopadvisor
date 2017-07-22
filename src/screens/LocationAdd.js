@@ -10,7 +10,7 @@ import { Actions } from 'react-native-router-flux';
 
 class LocationAdd extends Component {
     componentDidMount() {
-        //this._handleFacebookLogin();
+        this._handleFacebookLogin();
     }
 
     _handleFacebookLogin = async() => {
@@ -26,10 +26,6 @@ class LocationAdd extends Component {
 					const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
 					console.log( response );
 					const profile = await response.json();
-					Alert.alert(
-						'Logged in!',
-						`Hi ${profile.name}!`,
-					);
 					break;
 
 				case 'cancel': 
