@@ -10,27 +10,52 @@ import {
     Picker,
     ReactNative,
     findNodeHandle,
+    AsyncStorage,
 } from 'react-native';
 import {
     ImagePicker,
 } from 'expo';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import axios from 'axios';
 import { connect } from 'react-redux';
+import { pushLocations, setLocation } from '../actions';
+import { Actions } from 'react-native-router-flux';
+import API from '../utils/api';
 
 class LocationCreate extends Component {
     state = {
         image: null,
+        name: '',
+        address: '',
         rating: 0,
         gender: 'Gender',
         type: 'Location',
+        review: '',
+        fb_name: '',
+        fb_id: null,
     }
 
     componentDidMount() {
         this.setState({
             image:null,
+            name: '',
+            address: '',
             rating:0,
             gender: 'Gender',
             type: 'Location',
+            review: '',
+            fb_name: '',
+            fb_id: null,
+        });
+        this._getFbDetails();
+    }
+
+    _getFbDetails = async() => {
+        const fb_name = await AsyncStorage.getItem('@PoopAdvisor:name');
+        const fb_id = await AsyncStorage.getItem('@PoopAdvisor:fb_id');
+        this.setState({
+            fb_name: fb_name,
+            fb_id: fb_id
         });
     }
     _selectImage = async()  => {
@@ -51,8 +76,51 @@ class LocationCreate extends Component {
         this.setState({ rating: num });
     }
 
+    _submit() {
+        const { setLocation, pushLocations } = this.props;
+        const { latitude, longitude } = this.props.mapRegion;
+        const { name, address, gender, type, rating, review, image } = this.state;
+        const data = {
+            lat: latitude,
+            lng: longitude,
+            name: name,
+            address: address,
+            gender: gender,
+            type: type,
+            time_open: '0000',
+            time_close: '0000',
+        };
+        API.post( 'location', data, async ( location ) => {
+            setLocation( location.id );
+            pushLocations([ location ]);
+            const { id } = location;
+            if( rating && review ) {
+                API.post('location/' + id + '/review', {
+                    rating: rating,
+                    review: review
+                }, review => {
+                });
+            }
+            if( image ) { 
+                let formData = new FormData();
+                formData.append( 'image', { uri: image, filename: 'test', type: 'jpg' } );
+                const access_token = await AsyncStorage.getItem('@PoopAdvisor:access_token');
+                fetch('http://www.shittableba.com/api/location/' + id + '/photo', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + access_token
+                    }
+                });
+            }
+            Actions.pop();
+            Actions.pop();
+        });
+    }
+
     render() {
-        let { image, rating, gender, type } = this.state;
+        const { image, name, address, rating, gender, type, review, fb_name, fb_id } = this.state;
         return(
             <View style={ styles.container }>
                 <KeyboardAwareScrollView
@@ -85,12 +153,16 @@ class LocationCreate extends Component {
                             textAlign="center"
                             underlineColorAndroid="transparent"
                             style={ styles.name }
+                            value={ name }
+                            onChangeText={ value => this.setState({ name: value }) }
                         />
                         <TextInput
                             placeholder="Address"
                             textAlign="center"
                             underlineColorAndroid="transparent"
                             style={ styles.address }
+                            value={ address }
+                            onChangeText={ value => this.setState({ address: value }) }
                         />
                     </View>
                     <View style={ styles.rateContainer }>
@@ -155,7 +227,7 @@ class LocationCreate extends Component {
                                 selectedValue={ gender }
                                 onValueChange={ ( itemValue, itemIndex ) => this.setState({ gender: itemValue }) }
                             >
-                                <Picker.Item value="Gender" label="Gender" />
+                                <Picker.Item value="" label="Gender" />
                                 <Picker.Item value="Male" label="Male" />
                                 <Picker.Item value="Female" label="Female" />
                                 <Picker.Item value="Common" label="Common" />
@@ -166,7 +238,7 @@ class LocationCreate extends Component {
                                 selectedValue={ type }
                                 onValueChange={ ( itemValue, itemIndex ) => this.setState({ type: itemValue }) }
                             >
-                                <Picker.Item value="Location" label="Location" />
+                                <Picker.Item value="" label="Location" />
                                 <Picker.Item value="Restaurant" label="Restaurant" />
                                 <Picker.Item value="Mall" label="Mall" />
                                 <Picker.Item value="Bar" label="Bar" />
@@ -180,11 +252,13 @@ class LocationCreate extends Component {
                     </View>
                     <View style={ styles.commentDetailsContainer }>
                         <View style={ styles.profileImageContainer }>
-                            <Image source={ require('../assets/images/icon-profile.png') } />
+                            <Image 
+                                style={{ borderRadius: 25, width:50, height:50 }}
+                                source={{ uri: 'https://graph.facebook.com/' + fb_id + '/picture' }} />
                         </View>
                         <View style={ styles.commentContainer }>
                             <Text style={ styles.commenterName }>
-                                Lean Sibal
+                            { fb_name } 
                             </Text>
                             <TextInput 
                                 style={ styles.commenterComment }
@@ -194,10 +268,26 @@ class LocationCreate extends Component {
                                 onFocus={(event: Event) => {
                                     this._scrollToInput(findNodeHandle(event.target))
                                 }}
+                                value={ review }
+                                onChangeText={ value => this.setState({ review: value }) }
                             />
                         </View>
                     </View>
                 </KeyboardAwareScrollView>
+                <View style={ styles.footerContainer }>
+                    <TouchableOpacity 
+                        style={ styles.buttonContainer }
+                        onPress={ () => Actions.pop() }
+                    >
+                        <Text>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={ styles.buttonContainer }
+                        onPress={ () => this._submit() }
+                    >
+                        <Text>Submit</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     }
@@ -314,8 +404,29 @@ const styles = StyleSheet.create({
         height:100,
         paddingRight:15,
 
+    },
+    footerContainer: {
+        borderTopWidth: StyleSheet.hairlineWidth,
+        borderTopColor: '#b9b9b9',
+        height: 65,
+        justifyContent: 'space-around',
+        flexDirection: 'row',
+    },
+    buttonContainer: {
+        backgroundColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        height: 65,
     }
 
 });
 
-export default LocationCreate;
+export default connect( state => {
+    return {
+        mapRegion: state.map.mapRegion
+    };
+}, {
+    pushLocations,
+    setLocation
+})(LocationCreate);

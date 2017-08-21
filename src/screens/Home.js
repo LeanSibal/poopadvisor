@@ -9,7 +9,6 @@ import { Actions } from 'react-native-router-flux';
 
 class Home extends Component {
     componentDidMount(){
-        Actions.location_form();
     }
     render(){
         return(

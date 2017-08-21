@@ -27,7 +27,20 @@ class Map extends Component {
         first: true,
     };
 
+    componentWillReceiveProps( props ) {
+        const { location_id } = props;
+        console.log({
+            componentWillReceiveProps: location_id
+        });
+        if( location_id ) {
+            setTimeout(() => {
+                Actions.location_view();
+            }, 2500 );
+        }
+    }
+
     componentDidMount() {
+        const { location_id } = this.props;
         this._getLocationAsync();
     }
 
@@ -140,6 +153,7 @@ const styles = StyleSheet.create({
 
 export default connect( state => {
     return {
+        location_id: state.map.location_id,
         locations: state.map.locations,
         mapRegion: state.map.mapRegion,
         excempt: state.map.excempt,
