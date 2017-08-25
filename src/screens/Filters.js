@@ -13,10 +13,6 @@ class Filters extends Component {
                 image: require('../assets/images/icon-filters.png'),
                 action: 'filter_gender',
             }, {
-                name: 'Time',
-                image: require( '../assets/images/icon-favorites.png' ),
-                action: 'filter_time',
-            }, {
                 name: 'Location',
                 image: require( '../assets/images/icon-medal.png' ),
                 action: 'filter_location',

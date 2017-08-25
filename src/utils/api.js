@@ -37,6 +37,10 @@ class API {
     }
 
     static async access_token( username, password ) {
+        console.log( {
+            username: username,
+            password: password
+        });
         const params = {
             client_secret: oauth_credentials.client_secret,
             client_id: oauth_credentials.client_id,

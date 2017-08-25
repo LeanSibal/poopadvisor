@@ -40,13 +40,6 @@ class LocationDetails extends Component {
                     />
                     <Text>{ this.state.type }</Text>
                 </View>
-                <View style={ styles.detailContainer }>
-                    <Image 
-                        style={ styles.smallIcon }
-                        source={ require('../assets/images/clock-brown.png') } 
-                    />
-                    <Text>8am-10pm</Text>
-                </View>
             </View>
         );
     }
@@ -63,7 +56,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#b9b9b9',
         borderBottomWidth: StyleSheet.hairlineWidth,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
     },
     detailContainer: {
         flexDirection: 'row',

@@ -2,53 +2,109 @@ import React, { Component } from 'react';
 import {
     View,
     Text,
-    Image,
     StyleSheet,
+    Image,
     TouchableOpacity,
+	Alert,
     TextInput,
-    ScrollView,
-    Picker,
-    ReactNative,
-    findNodeHandle,
-    Alert,
     AsyncStorage,
+    findNodeHandle,
+    Platform,
 } from 'react-native';
 import {
     ImagePicker,
+    Font,
+    Facebook,
 } from 'expo';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import axios from 'axios';
 import { connect } from 'react-redux';
-import { pushLocations, setLocation } from '../actions';
-import { Actions } from 'react-native-router-flux';
 import API from '../utils/api';
+import { Actions } from 'react-native-router-flux';
+import { setLocation } from '../actions';
 
-class LocationCreate extends Component {
+class LocationReview extends Component {
     state = {
+        location_id: null,
         image: null,
+        fontLoaded: false,
         name: '',
         address: '',
-        rating: 0,
-        gender: 'Gender',
-        type: 'Location',
+        gender: '',
+        type: '',
+        rating:0,
         review: '',
         fb_name: '',
         fb_id: null,
     }
 
-    componentDidMount() {
+
+    async componentWillMount() {
+        this._handleFacebookLogin();
         this.setState({
-            image:null,
-            name: '',
-            address: '',
-            rating:0,
-            gender: 'Gender',
-            type: 'Location',
-            review: '',
-            fb_name: '',
-            fb_id: null,
+            rating: 0,
         });
-        this._getFbDetails();
+        const { location_id } = this.props;
+        this.setState({ location_id: location_id });
+        API.get( 'location/' + location_id, {}, location => {
+            const { name, address, gender, type } = location;
+            this.setState({ 
+                name: name,
+                address: address,
+                gender: gender,
+                type: type,
+            });
+        });
+        console.log({
+            ratelocation: location_id
+        });
+        await Font.loadAsync({
+            'raleway': require('../assets/fonts/raleway.ttf'),
+        });
+        this.setState({ fontLoaded: true });
+    }
+
+    _handleFacebookLogin = async() => {
+		try {
+            const app_id = Platform.OS === 'android' ? '1201211719949057' : '872887976186490';
+			const { type, token } = await Facebook.logInWithReadPermissionsAsync(
+				app_id, // Replace with your own app id in standalone app
+				{ permissions: ['public_profile'] }
+			);
+
+			switch (type) {
+				case 'success':
+					// Get the user's name using Facebook's Graph API
+					const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+					const profile = await response.json();
+					console.log( profile );
+                    AsyncStorage.setItem('@PoopAdvisor:name', profile.name );
+                    AsyncStorage.setItem('@PoopAdvisor:fb_id', profile.id );
+                    API.post( 'user/loginorregister', {
+                        name: profile.name,
+                        id: profile.id
+                    }, response => {
+                        API.access_token( response.email, response.fb_id );
+                    });
+                    this._getFbDetails();
+					break;
+
+				case 'cancel': 
+					Actions.pop();
+					break;
+
+				default: {
+					Alert.alert(
+					'Oops!',
+					'Login failed!',
+					);
+				}
+			}
+		} catch (e) {
+			Alert.alert(
+				'Oops!',
+				'Login failed!',
+			);
+		}
     }
 
     _getFbDetails = async() => {
@@ -58,7 +114,12 @@ class LocationCreate extends Component {
             fb_name: fb_name,
             fb_id: fb_id
         });
+        console.log({
+            fb_name: fb_name,
+            fb_id: fb_id
+        });
     }
+
     _selectImage = async()  => {
         let image = await ImagePicker.launchCameraAsync({
             allowsEditing: true,
@@ -69,67 +130,51 @@ class LocationCreate extends Component {
             this.setState({ image: image.uri  });
         }
     }
-    _scrollToInput (reactNode: any) {
-        this.refs.scroll.scrollToFocusedInput(reactNode)
-    }
 
     _selectRating( num ) {
         this.setState({ rating: num });
     }
 
-    _submit() {
-        const { setLocation, pushLocations } = this.props;
-        const { latitude, longitude } = this.props.mapRegion;
-        const { name, address, gender, type, rating, review, image } = this.state;
-        const data = {
-            lat: latitude,
-            lng: longitude,
-            name: name,
-            address: address,
-            gender: gender,
-            type: type,
-            time_open: '0000',
-            time_close: '0000',
-        };
-        if( name && address && gender && type ) { 
-            API.post( 'location', data, async ( location ) => {
-                setLocation( location.id );
-                pushLocations([ location ]);
-                const { id } = location;
-                if( rating && review ) {
-                    API.post('location/' + id + '/review', {
-                        rating: rating,
-                        review: review
-                    }, review => {
-                    });
-                }
-                if( image ) { 
-                    let formData = new FormData();
-                    formData.append( 'image', { uri: image, filename: 'test', type: 'jpg' } );
-                    const access_token = await AsyncStorage.getItem('@PoopAdvisor:access_token');
-                    fetch('http://www.shittableba.com/api/location/' + id + '/photo', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json',
-                            'Authorization': 'Bearer ' + access_token
-                        }
-                    });
-                }
-                Actions.pop();
-                Actions.pop();
+    _scrollToInput (reactNode: any) {
+        this.refs.scroll.scrollToFocusedInput(reactNode)
+    }
+
+    _submit = async() => {
+        const { location_id, rating, review, image } = this.state;
+        const { setLocation } = this.props;
+        if( rating && review ) {
+            Actions.pop();
+            Actions.pop();
+            API.post('location/' + location_id + '/review', {
+                rating: rating,
+                review: review
+            }, review => {
+                setLocation( location_id );
             });
         } else {
             Alert.alert(
-                'Oops',
-                'Please complete all location details.'
+                'Oops!',
+                'Please rate and review this location.'
             );
+        }
+        if( image ) {
+            let formData = new FormData();
+            formData.append( 'image', { uri: image, filename: 'test', type: 'jpg' } );
+            const access_token = await AsyncStorage.getItem('@PoopAdvisor:access_token');
+            fetch('http://www.shittableba.com/api/location/' + location_id + '/photo', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + access_token
+                }
+            });
         }
     }
 
     render() {
-        const { image, name, address, rating, gender, type, review, fb_name, fb_id } = this.state;
-        return(
+        const { image, rating, fb_id, fb_name, review, gender, type } = this.state;
+        return (
             <View style={ styles.container }>
                 <KeyboardAwareScrollView
                     style={ styles.scrollViewContainer }
@@ -155,24 +200,15 @@ class LocationCreate extends Component {
                             ) }
                         </TouchableOpacity>
                     </View>
-                    <View style={ styles.detailsContainer }>
-                        <TextInput
-                            placeholder="Location Name"
-                            textAlign="center"
-                            underlineColorAndroid="transparent"
-                            style={ styles.name }
-                            value={ name }
-                            onChangeText={ value => this.setState({ name: value }) }
-                        />
-                        <TextInput
-                            placeholder="Address"
-                            textAlign="center"
-                            underlineColorAndroid="transparent"
-                            style={ styles.address }
-                            value={ address }
-                            onChangeText={ value => this.setState({ address: value }) }
-                        />
-                    </View>
+                    { this.state.fontLoaded ? (
+                        <View>
+                            <Text style={ styles.name }>{ this.state.name }</Text>
+                            <View style={ styles.addressContainer }>
+                                <Image source={ require( '../assets/images/pin-gray.png' )} />
+                                <Text style={ styles.address }>{ this.state.address }</Text>
+                            </View>
+                        </View>
+                    ) : null }
                     <View style={ styles.rateContainer }>
                         <View style={ styles.poopContainer }>
                             <TouchableOpacity
@@ -229,35 +265,6 @@ class LocationCreate extends Component {
                             <Text>{ type }</Text>
                         </View>
                     </View>
-                    <View style={ styles.propertyPickerContainer }>
-                        <View style={ styles.propertyPicker }>
-                            <Picker
-                                selectedValue={ gender }
-                                onValueChange={ ( itemValue, itemIndex ) => this.setState({ gender: itemValue }) }
-                            >
-                                <Picker.Item value="" label="Gender" />
-                                <Picker.Item value="Male" label="Male" />
-                                <Picker.Item value="Female" label="Female" />
-                                <Picker.Item value="Common" label="Common" />
-                            </Picker>
-                        </View>
-                        <View style={ styles.propertyPicker }>
-                            <Picker
-                                selectedValue={ type }
-                                onValueChange={ ( itemValue, itemIndex ) => this.setState({ type: itemValue }) }
-                            >
-                                <Picker.Item value="" label="Location" />
-                                <Picker.Item value="Restaurant" label="Restaurant" />
-                                <Picker.Item value="Mall" label="Mall" />
-                                <Picker.Item value="Bar" label="Bar" />
-                                <Picker.Item value="Gas Station" label="Gas Station" />
-                                <Picker.Item value="Shop" label="Shop" />
-                                <Picker.Item value="Hotel/Casino" label="Hotel/Casino" />
-                                <Picker.Item value="Public Toilet" label="Public Toilet" />
-                                <Picker.Item value="Private Toilet" label="Private Toilet" />
-                            </Picker>
-                        </View>
-                    </View>
                     <View style={ styles.commentDetailsContainer }>
                         <View style={ styles.profileImageContainer }>
                             <Image 
@@ -297,14 +304,13 @@ class LocationCreate extends Component {
                     </TouchableOpacity>
                 </View>
             </View>
-        );
+       );
     }
 }
-
 const styles = StyleSheet.create({
     container: {
-        flex:1,
-        backgroundColor:'#fff',
+        flex: 1,
+        backgroundColor: 'white'
     },
     scrollViewContainer: {
         width:'100%',
@@ -318,18 +324,30 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 230,
     },
-    detailsContainer: {
-        flex:1,
-        marginTop:10,
-    },
     name: {
-        height:40,
-        fontSize:30,
-        fontWeight: 'bold'
+        fontFamily: 'raleway',
+        fontSize: 30,
+        textAlign: 'center',
+        marginTop:5,
+    },
+    addressContainer: {
+        flexDirection: 'row',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     address: {
-        height:30,
-        fontSize:16,
+        marginLeft: 5,
+        marginTop:5,
+        fontFamily: 'raleway',
+        color: '#b9b9b9',
+        fontSize: 14,
+        textAlign: 'center',
+    },
+    rateContainer: {
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: '#b9b9b9',
+        marginTop: 10,
     },
     poopContainer: {
         flex: 1,
@@ -340,23 +358,7 @@ const styles = StyleSheet.create({
         marginTop:5,
         textAlign: 'center',
         fontStyle: 'italic',
-    },
-    rateContainer: {
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        borderBottomColor: '#b9b9b9',
-    },
-    extraDetailsContainer: {
-        paddingTop: 3,
-        paddingRight: 5,
-        paddingBottom: 3,
-        paddingLeft: 5,
-        borderTopColor: '#b9b9b9',
-        borderTopWidth: StyleSheet.hairlineWidth,
-        borderBottomColor: '#b9b9b9',
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        flex:1,
+        marginBottom:10,
     },
     propertiesContainer: {
         paddingTop: 3,
@@ -382,12 +384,6 @@ const styles = StyleSheet.create({
         borderBottomColor: '#b9b9b9',
         borderBottomWidth: StyleSheet.hairlineWidth,
     },
-    propertyPicker: {
-        flex:1,
-    },
-    detailContainer: {
-        flexDirection: 'row',
-    },
     commentDetailsContainer: {
         flex:1,
         flexDirection: 'row',
@@ -411,7 +407,6 @@ const styles = StyleSheet.create({
         marginBottom:400,
         height:100,
         paddingRight:15,
-
     },
     footerContainer: {
         borderTopWidth: StyleSheet.hairlineWidth,
@@ -426,15 +421,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flex: 1,
         height: 65,
-    }
-
+    },
 });
 
 export default connect( state => {
     return {
-        mapRegion: state.map.mapRegion
+        location_id: state.map.rate_location_id
     };
 }, {
-    pushLocations,
     setLocation
-})(LocationCreate);
+})(LocationReview);

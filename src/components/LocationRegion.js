@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
 	Alert,
     AsyncStorage,
+    Platform,
 } from 'react-native';
 import {
     MapView,
@@ -34,8 +35,9 @@ class LocationRegion extends Component {
 
     _handleFacebookLogin = async() => {
 		try {
+            const app_id = Platform.OS === 'android' ? '1201211719949057' : '872887976186490';
 			const { type, token } = await Facebook.logInWithReadPermissionsAsync(
-				'1201211719949057', // Replace with your own app id in standalone app
+				app_id, // Replace with your own app id in standalone app
 				{ permissions: ['public_profile'] }
 			);
 

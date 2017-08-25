@@ -14,12 +14,15 @@ import {
     Font 
 } from 'expo';
 import Gallery from 'react-native-image-gallery';
+import { setLocation, rateLocation } from '../actions';
 import { connect } from 'react-redux';
 import API from '../utils/api';
+import { Actions } from 'react-native-router-flux';
 
 class Location extends Component {
 
     state = {
+        location_id: null,
         fontLoaded: false,
         name: '',
         address: '',
@@ -32,8 +35,11 @@ class Location extends Component {
         rating: null,
     }
 
+
     async componentWillMount() {
-        const { location_id } = this.props;
+        const { location_id, setLocation } = this.props;
+        this.setState({ location_id: location_id });
+        setLocation( null );
         API.get( 'location/' + location_id, {}, location => {
             const { name, address, gender, type, time_open, time_close } = location;
             this.setState({ 
@@ -70,6 +76,13 @@ class Location extends Component {
         });
         this.setState({ fontLoaded: true });
     }
+
+    _rate() {
+        const { location_id } = this.state;
+        const { rateLocation } = this.props;
+        rateLocation( location_id );
+        Actions.location_rate();
+    }
     
     render() {
         return (
@@ -97,7 +110,10 @@ class Location extends Component {
                         </View>
                     ) : null }
 
-                    <TouchableOpacity style={ styles.rateButton }>
+                    <TouchableOpacity 
+                        style={ styles.rateButton }
+                        onPress={ () => this._rate() }
+                    >
                         { this.state.rating ? (
                             <Poops poops={ this.state.rating }/>
                         ) : null }
@@ -179,4 +195,7 @@ export default connect( state => {
     return {
         location_id: state.map.location_id
     };
+},{
+    setLocation,
+    rateLocation
 })(Location);

@@ -1,11 +1,13 @@
 import { 
     MAP_REGION_CHANGE,
     SET_LOCATION_ID,
+    RATE_LOCATION_ID,
     PUSH_LOCATIONS,
     PUSH_LARGER_BOUNDS,
 } from '../actions/types';
 const INITIAL_STATE = {
     location_id: null,
+    rate_location_id: null,
     mapRegion: {
         latitude: 14.56091178,
         longitude: 121.02452788,
@@ -53,6 +55,9 @@ export default ( state = INITIAL_STATE, action ) => {
             }
             return { ...state, excempt: excempt };
 
+        case RATE_LOCATION_ID:
+            return { ...state, rate_location_id: action.payload };
+            
 
         default:
             return state;

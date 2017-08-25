@@ -1,8 +1,9 @@
 import { 
     MAP_REGION_CHANGE,
     SET_LOCATION_ID,
+    RATE_LOCATION_ID,
     PUSH_LOCATIONS,
-    PUSH_LARGER_BOUNDS
+    PUSH_LARGER_BOUNDS,
 } from './types';
 
 export const onMapRegionChange = mapRegion => {
@@ -11,6 +12,7 @@ export const onMapRegionChange = mapRegion => {
         payload: mapRegion
     }
 }
+
 
 export const pushLocations = locations => {
     return {
@@ -29,6 +31,12 @@ export const pushLargerBounds = bounds => {
 export const setLocation = location_id => {
     return {
         type: SET_LOCATION_ID,
+        payload: location_id
+    }
+}
+export const rateLocation = location_id => {
+    return {
+        type: RATE_LOCATION_ID,
         payload: location_id
     }
 }

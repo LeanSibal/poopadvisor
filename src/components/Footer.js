@@ -25,7 +25,7 @@ class Footer extends Component {
         return (
             <View style={styles.footer}>
                 <TouchableOpacity
-                    onPress={ () => Actions.menu() }
+                    onPress={ () => Actions.filters() }
                 >
                     <Image
                         source={ require('../assets/images/left-button.png') }
