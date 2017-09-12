@@ -1,12 +1,13 @@
 {
-  "name": "poopadvisor",
-  "version": "0.0.0",
-  "description": "Hello Expo!",
+  "name": "Poopadvisor",
+  "version": "1.0.0",
+  "description": "Toilet Rating App!",
   "author": null,
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "dependencies": {
     "axios": "^0.16.2",
+    "exp": "^44.0.0",
     "expo": "^18.0.4",
     "http": "0.0.0",
     "qs": "^6.5.0",

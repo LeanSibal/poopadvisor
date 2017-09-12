@@ -118,7 +118,7 @@ class Location extends Component {
                             <Poops poops={ this.state.rating }/>
                         ) : null }
                         {this.state.fontLoaded ? ( 
-                            <Text style={ styles.rateText }>Rate Shittability!</Text>
+                            <Text style={ styles.rateText }>Rate Sh*ttability!</Text>
                         ) : null }
                     </TouchableOpacity>
 

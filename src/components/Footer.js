@@ -33,7 +33,7 @@ class Footer extends Component {
                 </TouchableOpacity>
                 {
                     this.state.fontLoaded ? (
-                        <Text style={styles.branding}>Shittable ba?</Text>
+                        <Text style={styles.branding}>Sh*ttable ba?</Text>
                     ) : null
                 }
                 <TouchableOpacity

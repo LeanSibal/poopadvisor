@@ -211,7 +211,7 @@ class LocationCreate extends Component {
                                 : (<Image source={ require('../assets/images/poop-empty.png') } /> ) }
                             </TouchableOpacity>
                         </View>
-                        <Text style={ styles.rateText }>Rate Shittability!</Text>
+                        <Text style={ styles.rateText }>Rate Sh*ttability!</Text>
                     </View>
                     <View style={ styles.propertiesContainer }>
                         <View style={ styles.propertyContainer }>
@@ -270,7 +270,7 @@ class LocationCreate extends Component {
                             </Text>
                             <TextInput 
                                 style={ styles.commenterComment }
-                                placeholder="Is it clean? Is it free? Does it have the necessary tools? Tell us how shittable this toilet is."
+                                placeholder="Is it clean? Is it free? Does it have the necessary tools? Tell us how sh*ttable this toilet is."
                                 underlineColorAndroid="transparent"
                                 multiline={ true }
                                 onFocus={(event: Event) => {
