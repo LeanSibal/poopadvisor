@@ -16,7 +16,7 @@ class Menu extends Component {
                 name: 'Favorites',
                 image: require( '../assets/images/icon-favorites.png' ),
             }, {
-                name: 'Most Sh*ttable',
+                name: 'Most Poopable',
                 image: require( '../assets/images/icon-medal.png' ),
             }, {
                 name: 'About',

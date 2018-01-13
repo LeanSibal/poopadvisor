@@ -118,9 +118,17 @@ class Location extends Component {
                             <Poops poops={ this.state.rating }/>
                         ) : null }
                         {this.state.fontLoaded ? ( 
-                            <Text style={ styles.rateText }>Rate Sh*ttability!</Text>
+                            <Text style={ styles.rateText }>Rate Poopability!</Text>
                         ) : null }
                     </TouchableOpacity>
+
+                    <TouchableOpacity style={ styles.reportButton }>
+                        <View style={ styles.reportContainer }>
+                            <Image source={ require( '../assets/images/icon-report.png' ) } />
+                            <Text style={ styles.reportText }>Report</Text>
+                        </View>
+                    </TouchableOpacity>
+            
 
                     { this.state.type ? ( 
                         <LocationDetails
@@ -188,6 +196,19 @@ const styles = StyleSheet.create({
         marginTop:5,
         textAlign: 'center',
         fontStyle: 'italic',
+    },
+    reportContainer: {
+        flexDirection: 'row',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom:10,
+    },
+    reportText: {
+        marginLeft: 5,
+        marginTop:5,
+        fontSize: 14,
+        textAlign: 'center',
     }
 });
 
