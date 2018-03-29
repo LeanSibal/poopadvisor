@@ -161,7 +161,7 @@ class LocationReview extends Component {
             let formData = new FormData();
             formData.append( 'image', { uri: image, filename: 'test', type: 'jpg' } );
             const access_token = await AsyncStorage.getItem('@PoopAdvisor:access_token');
-            fetch('http://www.shittableba.com/api/location/' + location_id + '/photo', {
+            fetch('http://173.255.116.56/api/location/' + location_id + '/photo', {
                 method: 'POST',
                 body: formData,
                 headers: {
