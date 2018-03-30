@@ -7,14 +7,13 @@ import reducers from './src/reducers';
 import Router from './src/Router';
 
 export default class App extends Component {
-    render() {
-        return (
+  render() {
+    return (
             <Provider store={ createStore(reducers) }>
                 <Router />
             </Provider>
-        );
-    }
+    );
+  }
 }
-
-console.ignoredYellowBox = ['Warning: View.propTypes'];
+//console.ignoredYellowBox = ['Warning: View.propTypes'];
 
