@@ -17,7 +17,7 @@ class Footer extends Component {
     }
     async componentDidMount() {
         await Font.loadAsync({
-            'lobster': require('../assets/fonts/lobster.otf'),
+            'bubbleboddy': require('../assets/fonts/bubbleboddy.ttf'),
         });
         this.setState({ fontLoaded: true });
     }
@@ -31,11 +31,11 @@ class Footer extends Component {
                         source={ require('../assets/images/left-button.png') }
                     />
                 </TouchableOpacity>
-                {
-                    this.state.fontLoaded ? (
-                        <Text style={styles.branding}>Poopable ba?</Text>
-                    ) : null
-                }
+				{
+					this.state.fontLoaded ? (
+						<Text style={styles.branding}>pwet</Text>
+					) : null
+				}
                 <TouchableOpacity
                     onPress={ () => Actions.location_add() }
                 >
@@ -54,14 +54,23 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor:'#A4842F',
+        backgroundColor:'#a48511',
         alignSelf: 'stretch',
         height:60
     },
+	logo: {
+		height:60
+	},
     branding: {
-        fontFamily: 'lobster',
+        fontFamily: 'bubbleboddy',
         color:'#fff',
-        fontSize: 30
+        fontSize: 45,
+		textShadowColor: '#694501',
+		textShadowOffset: {
+			width:1,
+			height:1
+		},
+		
     }
 });
 

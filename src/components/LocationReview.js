@@ -247,7 +247,7 @@ class LocationReview extends Component {
                                 : (<Image source={ require('../assets/images/poop-empty.png') } /> ) }
                             </TouchableOpacity>
                         </View>
-                        <Text style={ styles.rateText }>Rate Poopablility!</Text>
+                        <Text style={ styles.rateText }>Rate Toilet!</Text>
                     </View>
                     <View style={ styles.propertiesContainer }>
                         <View style={ styles.propertyContainer }>
