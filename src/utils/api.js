@@ -12,7 +12,7 @@ const oauth_credentials = {
 
 class API {
     static get( url, params, callback ) {
-        axios.get( 'http://173.255.116.56/api/' + url + '?' + qs.stringify( params ) )
+        axios.get( 'http://35.196.82.215/api/' + url + '?' + qs.stringify( params ) )
         .then( response => {
             callback( response.data )
         })
@@ -20,7 +20,7 @@ class API {
 
     static async post( url, params, callback ) {
         var post_data = {
-			url: 'http://173.255.116.56/api/' + url,
+			url: 'http://35.196.82.215/api/' + url,
             data: params,
             method: 'post'
         };
@@ -49,7 +49,7 @@ class API {
             password: password
         };
         const token = await AsyncStorage.getItem('@PoopAdvisor:access_token');
-        axios.post( 'http://173.255.116.56/oauth/token', params ).then( response => {
+        axios.post( 'http://35.196.82.215/oauth/token', params ).then( response => {
             const { access_token, expires_in, refresh_token } = response.data;
             AsyncStorage.setItem('@PoopAdvisor:access_token', access_token );
         });

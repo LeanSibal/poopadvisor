@@ -13,6 +13,7 @@ import {
     Alert,
     AsyncStorage,
 } from 'react-native';
+import CheckBox from 'react-native-check-box';
 import {
     ImagePicker,
 } from 'expo';
@@ -34,6 +35,7 @@ class LocationCreate extends Component {
         review: '',
         fb_name: '',
         fb_id: null,
+		termsandconditions: false,
     }
 
     componentDidMount() {
@@ -47,6 +49,7 @@ class LocationCreate extends Component {
             review: '',
             fb_name: '',
             fb_id: null,
+			termsandconditions: false,
         });
         this._getFbDetails();
     }
@@ -77,10 +80,19 @@ class LocationCreate extends Component {
         this.setState({ rating: num });
     }
 
+	_goToTermsAndConditions() {
+		alert('here');
+	}
+
     _submit() {
         const { setLocation, pushLocations } = this.props;
         const { latitude, longitude } = this.props.mapRegion;
-        const { name, address, gender, type, rating, review, image } = this.state;
+        const { name, address, gender, type, rating, review, image, termsandconditions } = this.state;
+		if( !termsandconditions ){
+			alert('You must agree to the terms and conditions.');
+			return;
+		}
+
         const data = {
             lat: latitude,
             lng: longitude,
@@ -107,7 +119,7 @@ class LocationCreate extends Component {
                     let formData = new FormData();
                     formData.append( 'image', { uri: image, filename: 'test', type: 'jpg' } );
                     const access_token = await AsyncStorage.getItem('@PoopAdvisor:access_token');
-                    fetch('http://173.255.116.56/api/location/' + id + '/photo', {
+                    fetch('http://35.196.82.215/api/location/' + id + '/photo', {
                         method: 'POST',
                         body: formData,
                         headers: {
@@ -127,8 +139,9 @@ class LocationCreate extends Component {
         }
     }
 
+
     render() {
-        const { image, name, address, rating, gender, type, review, fb_name, fb_id } = this.state;
+        const { image, name, address, rating, gender, type, review, fb_name, fb_id, termsandconditions } = this.state;
         return(
             <View style={ styles.container }>
                 <KeyboardAwareScrollView
@@ -211,7 +224,7 @@ class LocationCreate extends Component {
                                 : (<Image source={ require('../assets/images/poop-empty.png') } /> ) }
                             </TouchableOpacity>
                         </View>
-                        <Text style={ styles.rateText }>Rate Poopability!</Text>
+                        <Text style={ styles.rateText }>Rate Toilet!</Text>
                     </View>
                     <View style={ styles.propertiesContainer }>
                         <View style={ styles.propertyContainer }>
@@ -283,18 +296,35 @@ class LocationCreate extends Component {
                     </View>
                 </KeyboardAwareScrollView>
                 <View style={ styles.footerContainer }>
-                    <TouchableOpacity 
-                        style={ styles.buttonContainer }
-                        onPress={ () => Actions.pop() }
-                    >
-                        <Text>Cancel</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={ styles.buttonContainer }
-                        onPress={ () => this._submit() }
-                    >
-                        <Text>Submit</Text>
-                    </TouchableOpacity>
+					<View style={ styles.termsAndConditionsContainer }>
+						<CheckBox 
+							style={ styles.agreementCheckbox }
+							onClick = { () => this.setState({ termsandconditions: !termsandconditions }) }
+							isChecked= { termsandconditions }
+						/>
+						<Text style={ styles.agreementText }>I agree to the </Text>
+						<TouchableOpacity
+							onPress = { () => Actions.tnc() }
+						>
+							<Text 
+								style={ styles.termsAndConditionsLink }
+							>Terms and Conditions</Text>
+						</TouchableOpacity>
+					</View>
+					<View style={ styles.footerButtonsContainer }>
+						<TouchableOpacity 
+							style={ styles.buttonContainer }
+							onPress={ () => Actions.pop() }
+						>
+							<Text>Cancel</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={ styles.buttonContainer }
+							onPress={ () => this._submit() }
+						>
+							<Text>Submit</Text>
+						</TouchableOpacity>
+					</View>
                 </View>
             </View>
         );
@@ -414,12 +444,34 @@ const styles = StyleSheet.create({
 
     },
     footerContainer: {
+        height: 100,
+    },
+	termsAndConditionsContainer: {
+        borderTopWidth: StyleSheet.hairlineWidth,
+		height: 35,
+        borderTopColor: '#b9b9b9',
+		paddingLeft:15,
+		justifyContent: 'flex-start',
+        flexDirection: 'row',
+	},
+	footerButtonsContainer: {
+        justifyContent: 'space-around',
+        flexDirection: 'row',
         borderTopWidth: StyleSheet.hairlineWidth,
         borderTopColor: '#b9b9b9',
         height: 65,
-        justifyContent: 'space-around',
-        flexDirection: 'row',
-    },
+	},
+	agreementCheckbox: {
+		marginTop:5,
+	},
+	agreementText: {
+		marginTop: 9,
+		marginLeft: 9,
+	},
+	termsAndConditionsLink: {
+		marginTop: 9,
+		color: '#42adf4',
+	},
     buttonContainer: {
         backgroundColor: 'white',
         alignItems: 'center',

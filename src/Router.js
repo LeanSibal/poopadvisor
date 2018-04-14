@@ -13,6 +13,7 @@ import LocationView from './screens/LocationView';
 import LocationAdd from './screens/LocationAdd';
 import LocationForm from './screens/LocationForm';
 import LocationRate from './screens/LocationRate';
+import TermsAndConditions from './screens/TermsAndConditions';
 
 const RouterComponent = () => {
     return (
@@ -28,8 +29,9 @@ const RouterComponent = () => {
                     <Scene key="filter_rating" component={FilterRating} title="Rating" />
                     <Scene key="location_view" component={LocationView} title="" />
                     <Scene key="location_add" component={LocationAdd} title="Add" />
-                    <Scene key="location_form" component={LocationForm} title="Add" />
                     <Scene key="location_rate" component={LocationRate} title="Rate" />
+                    <Scene key="location_form" component={LocationForm} title="Add" />
+					<Scene key ="tnc" component={TermsAndConditions} title="Terms and Conditions"/>
                 </Scene>
             </Router>
         </View>
