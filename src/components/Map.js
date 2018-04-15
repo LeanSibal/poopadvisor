@@ -47,12 +47,14 @@ class Map extends Component {
     _getLocationAsync = async () => {
         const { mapRegion, onMapRegionChange } = this.props;
         let { status } = await Permissions.askAsync( Permissions.LOCATION );
-        let location = await Location.getCurrentPositionAsync({});
-        this._onRegionChange({
-            ...mapRegion,
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude
-        });
+		if( status === 'granted' ) {
+			let location = await Location.getCurrentPositionAsync({});
+			this._onRegionChange({
+				...mapRegion,
+				latitude: location.coords.latitude,
+				longitude: location.coords.longitude
+			});
+		}
 
     }
 
